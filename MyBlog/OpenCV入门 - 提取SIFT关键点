@@ -1,0 +1,39 @@
+OpenCV入门 - 提取SIFT关键点
+
+    在基于内容的图像检索中，图像的局部不变特征是相对全局特征来说的，局部特征可以有力的描述图像的特征，具有重要的意义，而在很多基于灰度的局部特征提取算法中SIFT具有最好的效果，具体原理要看Lowe的论文，下面利用opencv感受以下效果。
+
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/nonfree/features2d.hpp> //
+using namespace cv;
+
+
+int main(int argc, const char *argv[]){
+    Mat input = imread("input.jpg", 0);// load as grayscale
+    
+    SiftFeatureDetector detector;
+    vector<KeyPoint> keypoints;
+    detector.detect(input, keypoints);
+    
+    // show the keypoints on an image
+    Mat output;
+    drawKeypoints(input, keypoints, output);
+    imwrite("sift_result.jpg",output);
+
+    return 0;
+}
+
+运行：
+g++ sift_demo.cxx 编译出现链接错误：
+/tmp/cczZicnK.o: In function `main':
+sift_demo.cxx:(.text+0x4d): undefined reference to `cv::imread(std::string const&, int)'
+/tmp/cczZicnK.o: In function `cv::Mat::~Mat()':
+sift_demo.cxx:(.text._ZN2cv3MatD2Ev[_ZN2cv3MatD5Ev]+0x2b): undefined reference to `cv::fastFree(void*)'
+/tmp/cczZicnK.o: In function `cv::Mat::release()':
+sift_demo.cxx:(.text._ZN2cv3Mat7releaseEv[_ZN2cv3Mat7releaseEv]+0x3b): undefined reference to `cv::Mat::deallocate()'
+collect2: error: ld returned 1 exit status
+解决：说明没有找到库的位置，制定， g++ sift_demo.cxx `pkg-config opencv --cflags --libs`
+
+
+最后得到的结果如下，可以看到关键点很多。
+
