@@ -1,0 +1,20 @@
+OpenCV入门 - 调整图片尺寸(image resize)
+
+   通过Mat::size()方法得到关于图像大小的Size实例，通过resize方法调整图像大小。代码如下：
+
+
+
+
+
+
+效果：
+
+
+
+
+
+
+
+
+参考：
+1.cv::resize()

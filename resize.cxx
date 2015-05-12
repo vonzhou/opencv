@@ -8,34 +8,26 @@ using namespace cv;
 using namespace std;
 
 int main(int argc, const char *argv[]){
-    Mat car1 = imread("car1.jpeg", 0);// load as grayscale
-    Mat car2 = imread("car2.jpeg", 0);
-    //cv::resize(car1,car1,car2.size());
+    Mat big = imread("imgs/linux.jpg",-1);//CV_LOAD_IMAGE_ANYDEPTH);// the big pic
+    Mat dst = imread("imgs/200X200.jpg", -1);
 
-    SiftFeatureDetector detector;
-    vector<KeyPoint> keypoints1, keypoints2;
-    detector.detect(car1, keypoints1);
-    detector.detect(car2, keypoints2);
-    cout << "# keypoints of car1 :" << keypoints1.size() << endl;
-    cout << "# keypoints of car2 :" << keypoints2.size() << endl;
-   
-    Mat descriptors1,descriptors2;
-    Ptr<DescriptorExtractor> extractor = DescriptorExtractor::create("SIFT");
-    extractor->compute(car1,keypoints1,descriptors1);
-    extractor->compute(car2,keypoints2,descriptors2);
+    cout << "Mat info:" << endl;
+    cout << "Original pic," << big.rows << " : "<< big.cols << endl;
+    cout << "dst pic, " << dst.rows << " : "<< dst.cols << endl;
     
+    Size s = big.size();
+    cout << "Pic Size info:" << endl;
+    cout << "Original pic," << s.width << " : "<< s.height << endl;
+    s = dst.size();
+    cout << "dst  pic," << s.width << " : "<< s.height << endl;
+    // resize big to dst 
+    cv::resize(big, dst, dst.size());
 
-    //Ptr<DescriptorMatcher> matcher = DescriptorMatcher::create("BruteForce");// BruteForce L2
-    BFMatcher bfmatcher(NORM_L2, true);
-    vector<DMatch> matches;
-    bfmatcher.match(descriptors1, descriptors2, matches);
-    cout << "# matches : " << matches.size() << endl;
 
 
     // show it on an image
-    Mat output;
-    drawMatches(car1, keypoints1, car2, keypoints2, matches, output);
-    imshow("car matches result",output);
+    imshow("big", big);
+    imshow("test", dst);
     waitKey(0);
 
     return 0;
