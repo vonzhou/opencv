@@ -1,0 +1,89 @@
+OpenCV入门 - Ubuntu 12.04 安装OpenCV
+
+本来打算在Ubuntu 12.04上安装opencv 3.0的，结果发生了下面（2）中的错误，不知如何解决，所以最后还是老老实实安装opencv 2.4.
+
+（1）编译时出现错误：
+In file included from /home/vonzhou/Downloads/opencv-3.0.0-rc1/modules/videoio/src/cap_ffmpeg_impl.hpp:65:0,
+                 from /home/vonzhou/Downloads/opencv-3.0.0-rc1/modules/videoio/src/cap_ffmpeg.cpp:45:
+/home/vonzhou/Downloads/opencv-3.0.0-rc1/modules/videoio/src/ffmpeg_codecs.hpp:171:7: error: ‘AV_CODEC_ID_H263I’ was not declared in this scope
+/home/vonzhou/Downloads/opencv-3.0.0-rc1/modules/videoio/src/ffmpeg_codecs.hpp:287:7: error: ‘AV_CODEC_ID_WNV1’ was not declared in this scope
+make[2]: *** [modules/videoio/CMakeFiles/opencv_videoio.dir/src/cap_ffmpeg.cpp.o] Error 1
+
+解决：问题在于ffmpeg，手动下载并安装（参考这里）
+./configure --enable-shared --disable-static  
+make
+sudo make install
+然后重新make我们的opencv。
+
+（http://stackoverflow.com/questions/26592577/installing-opencv-in-ubuntu-14-10/27020828#27020828）
+
+（2）错误：
+libopencv_videoio.so.3.0.0:undefined reference to "avcodec_free_frame"
+libopencv_videoio.so.3.0.0: undefined reference to `avcodec_encode_video2'
+
+
+安装OpenCV 2.4.10过程：
+（1）安装必要的软件；
+（2）下载opencv并解压；
+
+（3）make，静静等待；
+出现错误：
+/home/vonzhou/Downloads/opencv-2.4.10/modules/core/src/system.cpp: In function ‘(static initializers for /home/vonzhou/Downloads/opencv-2.4.10/modules/core/src/system.cpp)’:
+/home/vonzhou/Downloads/opencv-2.4.10/modules/core/src/system.cpp:280:10: error: inconsistent operand constraints in an ‘asm’
+[ 22%] Building CXX object modules/core/CMakeFiles/opencv_core.dir/src/opengl_interop_deprecated.cpp.o
+make[2]: *** [modules/core/CMakeFiles/opencv_core.dir/src/system.cpp.o] Error 1
+
+解决：这是一个和编译器有关的问题，升级gcc还是没解决，可以替换掉system.cpp文件（具体看这里）。
+http://answers.opencv.org/question/45836/problem-in-installing-opencv-in-ubntu-1204-32-bit-system/
+（4）sudo make install
+（5）配置：sudo vi /etc/ld.so.conf.d/opencv.conf，加入内容：
+/usr/local/lib
+而后：sudo ldconfig
+
+(6)这样就安装成功了，重启后，用自带的样例代码测试下：
+cd Downloads/opencv-2.4.10/samples/c
+./build_all.sh  
+然后运行人脸测试程序 ： ./facedetect
+运行结果：会把你的脸给识别处理 ，:)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
