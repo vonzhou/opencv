@@ -5,7 +5,7 @@ using namespace cv;
 
 
 int main(int argc, const char *argv[]){
-    Mat input = imread("input.jpg", 0);// load as grayscale
+    Mat input = imread("imgs/eiffel-1.jpg", 0);// load as grayscale
     
     SiftFeatureDetector detector;
     vector<KeyPoint> keypoints;
