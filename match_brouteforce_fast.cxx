@@ -5,6 +5,7 @@
 
 #include <iostream>
 #include <dirent.h>
+#include <ctime>
 using namespace cv;
 using namespace std;
 
@@ -61,6 +62,10 @@ int main(int argc, const char *argv[]){
    
     //Ptr<DescriptorExtractor> extractor = DescriptorExtractor::create("SIFT"); 
     // WHY CANNOT WORK ???
+     clock_t begin = clock();
+    
+
+    
 
     vector<KeyPoint> keypoints1, keypoints2;
     fast.detect(image1, keypoints1);
@@ -72,6 +77,11 @@ int main(int argc, const char *argv[]){
     Mat descriptors1,descriptors2;
     extractor.compute(image1,keypoints1,descriptors1);
     extractor.compute(image2,keypoints2,descriptors2);
+
+    
+    clock_t end = clock();
+    double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+    cout << "Time Costs : " << elapsed_secs << endl;
 
     BFMatcher bfmatcher(NORM_L2, true);
     vector<DMatch> matches;

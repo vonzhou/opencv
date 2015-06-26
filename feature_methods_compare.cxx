@@ -13,7 +13,7 @@ using namespace cv;
 using namespace std;
 
 #define IMG_NUM 50;
-#define IMG_DIR "./imgs/"
+#define IMG_DIR "./imgs-precision-size/"
 
 void extract_faeatures(std::vector<Mat> imgs, string method);
 bool has_suffix(const std::string &str, const std::string &suffix);

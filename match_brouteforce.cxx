@@ -5,10 +5,12 @@
 
 #include <iostream>
 #include <dirent.h>
+#include <ctime>
 using namespace cv;
 using namespace std;
 
-#define IMG_DIR "./imgs/"
+#define IMG_DIR1 "./imgs-precision-size/"
+#define IMG_DIR "./images/"
 
 bool has_suffix(const std::string &str, const std::string &suffix);
 
@@ -66,6 +68,8 @@ int main(int argc, const char *argv[]){
     detector = FeatureDetector::create(method);
     extractor = DescriptorExtractor::create(method);
 
+    clock_t begin = clock();
+
     vector<KeyPoint> keypoints1, keypoints2;
     detector->detect(image1, keypoints1);
     detector->detect(image2, keypoints2);
@@ -76,6 +80,12 @@ int main(int argc, const char *argv[]){
     Mat descriptors1,descriptors2;
     extractor->compute(image1,keypoints1,descriptors1);
     extractor->compute(image2,keypoints2,descriptors2);
+
+    clock_t end = clock();
+    double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+    cout << "Time Costs : " << elapsed_secs << endl;
+
+    cout << descriptors1.cols << ":"<< descriptors1.rows;
     
     BFMatcher bfmatcher(NORM_L2, true);
     vector<DMatch> matches;
