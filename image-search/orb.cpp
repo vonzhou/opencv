@@ -1,9 +1,9 @@
 
-/*  Use ORB to match images, the critical point is to use ration test
+/*  Use ORB to match images, the critical point is to use ratio test
  *  to get good matches!!
  * 1. ratio test
  * 2.symmetric test
- *  Q:How to decide the ratio ??
+ *  Q:How to decide the ratio ?? To Test it.
  *    
  * @vonzhou
 */
@@ -11,7 +11,11 @@
 #include "orb.hpp"
 
  struct  MatchScore{
-    string image;
+    string query_image;
+    string train_image;
+    int query_image_keypoints_size;
+    int train_image_keypoints_size;
+    int good_matches_size;
     float jaccard;
 };
 
@@ -25,20 +29,20 @@ struct  ScoreComp{
 
 bool has_suffix(const std::string &str, const std::string &suffix);
 vector<string> match_scores_sort(std::vector<MatchScore> v, int k);
-vector<DMatch> ratio_test(vector< vector<DMatch> > matches12);
+vector<DMatch> ratio_test(vector< vector<DMatch> > matches12, double ratio);
 vector<DMatch> symmetric_test(std::vector<DMatch> good_matches1, std::vector<DMatch> good_matches2);
 
 /*
  * param:search image ,the dir of images dataset, the top k
  * return : the top k iamges that are most similar sorted by similarity 
 */
-vector<string> searchImages_ORB(string input_image, string img_dir, int k, int nfeatures){
+vector<string> searchImages_ORB(string input_image, string img_dir, int k, int nfeatures, double ratio){
 
-    string image1_name = input_image;
+    string query_name = input_image;
     string image_name ;
 
     //1. Get the image pair matrix...
-    Mat image1 = imread(image1_name, 1);
+    Mat query_image = imread(query_name, 1);
     Mat image;
 
     Ptr<FeatureDetector> detector;
@@ -71,13 +75,13 @@ vector<string> searchImages_ORB(string input_image, string img_dir, int k, int n
                 image_name = img_dir + name;
                 image = imread(image_name, 1);
                 // 2. detect features and extract the descriptors
-                detector->detect(image1, keypoints1);
+                detector->detect(query_image, keypoints1);
                 detector->detect(image, keypoints2);
 
-                // cout << "# keypoints of image1 :" << keypoints1.size() << endl;
+                // cout << "# keypoints of query_image :" << keypoints1.size() << endl;
                 // cout << "# keypoints of image :" << keypoints2.size() << endl;
 
-                extractor->compute(image1,keypoints1,descriptors1);
+                extractor->compute(query_image,keypoints1,descriptors1);
                 extractor->compute(image,keypoints2,descriptors2);
                 //cout << "Descriptors size :" << descriptors1.cols << ":"<< descriptors1.rows << endl;
 
@@ -93,8 +97,8 @@ vector<string> searchImages_ORB(string input_image, string img_dir, int k, int n
 
                 //4. ratio test proposed by David Lowe paper = 0.8
                 std::vector<DMatch> good_matches1, good_matches2;
-                good_matches1 = ratio_test(matches12);
-                good_matches2 = ratio_test(matches21);
+                good_matches1 = ratio_test(matches12, ratio);
+                good_matches2 = ratio_test(matches21, ratio);
 
                 // cout << "Good matches1:" << good_matches1.size() << endl;
                 // cout << "Good matches2:" << good_matches2.size() << endl;
@@ -108,10 +112,15 @@ vector<string> searchImages_ORB(string input_image, string img_dir, int k, int n
                 //5. Compute the similarity of this image pair...
                 float jaccard = 1.0 * better_matches.size() / (keypoints1.size() + keypoints2.size());
                 MatchScore ms;
-                ms.image = image_name;
+                ms.query_image = query_name.substr(query_name.find_last_of("/") + 1);
+                ms.train_image = name;
+                ms.query_image_keypoints_size = keypoints1.size();
+                ms.train_image_keypoints_size = keypoints2.size();
+                ms.good_matches_size =  better_matches.size();
                 ms.jaccard = jaccard;
+               
                 match_scores.push_back(ms);
-                //cout << image1_name << "-" << image_name<< ",jaccard:" << jaccard << endl;
+                //cout << query_name << "-" << image_name<< ",jaccard:" << jaccard << endl;
             }
         }
     }else{
@@ -138,17 +147,20 @@ vector<string> match_scores_sort(vector<MatchScore> v, int k){
     std::sort(v.begin(), v.end(), comp);
     std::vector<string> res;
     int last = v.size()-1;
+    int counter = 1;
     for(int i=last; i > last-k; i--){
-        res.push_back(v[i].image);
-        cout << v[i].image << ":" << v[i].jaccard<< endl;
+        res.push_back(v[i].train_image);
+        cout << counter << ": {" << v[i].query_image << ", " << v[i].train_image << ", "
+             << v[i].query_image_keypoints_size << ", " << v[i].train_image_keypoints_size << ", "
+             << v[i].good_matches_size << ", " << v[i].jaccard << "}" << endl;
+        counter ++ ;
     }
     return res;
 }
 
- //ratio test proposed by David Lowe paper = 0.8....
-vector<DMatch> ratio_test(vector< vector<DMatch> > matches12){
-    vector<DMatch> good_matches;
-    const float ratio = 0.8;   // You can tune it !!!             
+ //ratio test nearest/second nearest < ratio
+vector<DMatch> ratio_test(vector< vector<DMatch> > matches12, double ratio){
+    vector<DMatch> good_matches;         
     for(int i = 0; i < matches12.size(); i++){  
         if(matches12[i][0].distance < ratio * matches12[i][1].distance)
             good_matches.push_back(matches12[i][0]);

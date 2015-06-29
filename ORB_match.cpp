@@ -1,5 +1,5 @@
 
-/*  Use ORB to match two images, the critical point is to use ration test
+/*  Use ORB to match two images, the critical point is to use ratio test
  *  to get good matches!!
  * 1. ratio test
  * 2.symmetric test
@@ -22,16 +22,13 @@ using namespace std;
 
 int main(int argc, const char *argv[]){
 
-    if(argc != 3){
-        cout << "usage:match <image1> <image2>\n" ;
+    if(argc != 4){
+        cout << "usage:match <image1> <image2> <ratio>\n" ;
         exit(-1);
     }
   
-    string arg2 = string(argv[2]);
-    int level = atoi(arg2.c_str());
+    double ratio = (double)atof(argv[3]);
     string image1_name=string(argv[1]), image2_name = string(argv[2]);
-    // getline(cin, image1_name);
-    // getline(cin, image2_name);
 
     Mat image1 = imread(image1_name, 1);
     Mat image2 = imread(image2_name, 1);
@@ -74,14 +71,13 @@ int main(int argc, const char *argv[]){
     // ratio test proposed by David Lowe paper = 0.8
     std::vector<DMatch> good_matches1, good_matches2;
 
+    // Yes , the code here is redundant, it is easy to reconstruct it ....
     for(int i=0; i < matches12.size(); i++){
-        const float ratio = 0.8;
         if(matches12[i][0].distance < ratio * matches12[i][1].distance)
             good_matches1.push_back(matches12[i][0]);
     }
 
     for(int i=0; i < matches21.size(); i++){
-        const float ratio = 0.8;
         if(matches21[i][0].distance < ratio * matches21[i][1].distance)
             good_matches2.push_back(matches21[i][0]);
     }
