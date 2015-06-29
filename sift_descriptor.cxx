@@ -6,7 +6,7 @@ using namespace cv;
 using namespace std;
 
 int main(int argc, const char *argv[]){
-    const cv::Mat input = cv::imread("input.jpg", 0);// load as grayscale
+    const cv::Mat input = cv::imread("imgs/car1.jpeg", 0);// load as grayscale
     cv::Mat descriptors;
     Ptr<DescriptorExtractor> extractor = DescriptorExtractor::create("SIFT");
 
@@ -17,7 +17,7 @@ int main(int argc, const char *argv[]){
     extractor->compute(input, keypoints, descriptors);
     cout << descriptors.rows << ":" << descriptors.cols << endl;
     // too many bits
-    //cout << descriptors << endl;
+    cout << descriptors << endl;
 
     return 0;
 }

@@ -1,8 +1,8 @@
 
-/*  Use SIFT to match two images, the critical point is to use ration test
- *  to get good matches!!
+/*  Use SIFT to match two images, and show them!
  * 1. ratio test
  * 2.symmetric test
+ * 3. Broute force matching 
  * @vonzhou
 */
 

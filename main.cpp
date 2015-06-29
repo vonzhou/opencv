@@ -15,7 +15,7 @@ int main(int argc, const char *argv[]){
     }
   
     string image_name = string(argv[1]), dir_name = string(argv[2]);
-    std::vector<string> result = searchImages_ORB(image_name, dir_name, 20);
+    std::vector<string> result = searchImages_ORB(image_name, dir_name, 30, 4000);
     //cout << "result:" << result.size() << endl;
     // After get the top  k, we show it...
     // for(int i=0; i < result.size(); i++){

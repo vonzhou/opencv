@@ -10,7 +10,7 @@ using namespace cv;
 using namespace std;
 
 
-std::vector<string> searchImages_ORB(string input_image, string img_dir, int k);
+std::vector<string> searchImages_ORB(string input_image, string img_dir, int k, int nfeatures);
 
 
 

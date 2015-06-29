@@ -1,10 +1,8 @@
 
-/*  Use ORB to match two images, the critical point is to use ration test
- *  to get good matches!!
+/*  Use SIFT to match two images, and show them!
  * 1. ratio test
  * 2.symmetric test
- *  Q:How to decide the ratio ??
- *    
+ * 3. Flann-based  using kd-tree  matching 
  * @vonzhou
 */
 
@@ -23,7 +21,7 @@ using namespace std;
 int main(int argc, const char *argv[]){
 
     if(argc != 3){
-        cout << "usage:match <image1> <image2>\n" ;
+        cout << "usage:match <level> <image1> <image2>\n" ;
         exit(-1);
     }
   
@@ -38,10 +36,13 @@ int main(int argc, const char *argv[]){
 
     Ptr<FeatureDetector> detector;
     Ptr<DescriptorExtractor> extractor;
-    
-    // TODO default is 500 keypoints..but we can change
-    detector = FeatureDetector::create("ORB");  
-    extractor = DescriptorExtractor::create("ORB");
+
+    initModule_nonfree();
+    /* 
+     * SIFT,SURF, ORB
+    */
+    detector = FeatureDetector::create("SIFT");
+    extractor = DescriptorExtractor::create("SIFT");
 
     clock_t begin = clock();
 
@@ -61,13 +62,10 @@ int main(int argc, const char *argv[]){
     cout << "Descriptors size :" << descriptors1.cols << ":"<< descriptors1.rows << endl;
 
     vector< vector<DMatch> > matches12, matches21;
-    Ptr<DescriptorMatcher> matcher = DescriptorMatcher::create("BruteForce-Hamming");
+    Ptr<DescriptorMatcher> matcher = DescriptorMatcher::create("FlannBased");
     matcher->knnMatch( descriptors1, descriptors2, matches12, 2 );
     matcher->knnMatch( descriptors2, descriptors1, matches21, 2 );
     
-    // BFMatcher bfmatcher(NORM_L2, true);
-    // vector<DMatch> matches;
-    // bfmatcher.match(descriptors1, descriptors2, matches);
     cout << "Matches1-2:" << matches12.size() << endl;
     cout << "Matches2-1:" << matches21.size() << endl;
 
