@@ -110,7 +110,7 @@ vector<string> searchImages_ORB(string input_image, string img_dir, int k, int n
                 //cout << "Better matches:" << better_matches.size() << endl;
 
                 //5. Compute the similarity of this image pair...
-                float jaccard = 1.0 * better_matches.size() / (keypoints1.size() + keypoints2.size());
+                float jaccard = 1.0 * better_matches.size() / (keypoints1.size() + keypoints2.size() - better_matches.size());
                 MatchScore ms;
                 ms.query_image = query_name.substr(query_name.find_last_of("/") + 1);
                 ms.train_image = name;

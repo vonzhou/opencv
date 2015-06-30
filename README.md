@@ -36,6 +36,7 @@
 
 ### 3.Combine Them Together to Implement Image Retrieval by similarity.
 => [image-search]()
+=> **Test Results** 1. [500 features with ratio 0.9](test_log_500_0.9.md)
 
 
 ### 4.Other demo on the road.
