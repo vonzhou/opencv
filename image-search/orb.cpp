@@ -137,6 +137,107 @@ vector<string> searchImages_ORB(string input_image, string img_dir, int k, int n
     return result;
 }
 
+vector<string> searchImages_SIFT(string input_image, string img_dir, int k, double ratio){
+
+    string query_name = input_image;
+    string image_name ;
+
+    //1. Get the image pair matrix...
+    Mat query_image = imread(query_name, 1);
+    Mat image;
+
+    Ptr<FeatureDetector> detector;
+    Ptr<DescriptorExtractor> extractor;
+
+    initModule_nonfree(); // IF YOU USE SIFT,MAKE SURE TO DO THIS, OR YOU WILL GET COREDUMP!!!
+    
+    detector = FeatureDetector::create("SIFT");  
+
+    extractor = DescriptorExtractor::create("SIFT");
+
+    vector<KeyPoint> keypoints1, keypoints2;
+    Mat descriptors1,descriptors2;
+
+    vector< vector<DMatch> > matches12, matches21;
+    Ptr<DescriptorMatcher> matcher = DescriptorMatcher::create("BruteForce");
+
+    std::vector<string> result;
+    std::vector<MatchScore> match_scores;
+
+    clock_t begin = clock();
+
+    DIR *dir;
+    struct dirent *ent;
+    if((dir = opendir(img_dir.c_str())) != NULL){
+        while((ent = readdir(dir)) != NULL){
+            string name = (string)(ent->d_name);
+            // jpg , jpeg png etc images(filter other files that is not image)  FIXME
+            if(has_suffix(name, "g")){
+                image_name = img_dir + name;
+                image = imread(image_name, 1);
+                // 2. detect features and extract the descriptors
+                detector->detect(query_image, keypoints1);
+                detector->detect(image, keypoints2);
+
+                // cout << "# keypoints of query_image :" << keypoints1.size() << endl;
+                // cout << "# keypoints of image :" << keypoints2.size() << endl;
+
+                extractor->compute(query_image,keypoints1,descriptors1);
+                extractor->compute(image,keypoints2,descriptors2);
+                //cout << "Descriptors size :" << descriptors1.cols << ":"<< descriptors1.rows << endl;
+
+                //3.Match the descriptors in two directions...
+                matcher->knnMatch( descriptors1, descriptors2, matches12, 2 );
+                matcher->knnMatch( descriptors2, descriptors1, matches21, 2 );
+
+                // BFMatcher bfmatcher(NORM_L2, true);
+                // vector<DMatch> matches;
+                // bfmatcher.match(descriptors1, descriptors2, matches);
+                // cout << "Matches1-2:" << matches12.size() << endl;
+                // cout << "Matches2-1:" << matches21.size() << endl;
+
+                //4. ratio test proposed by David Lowe paper = 0.8
+                std::vector<DMatch> good_matches1, good_matches2;
+                good_matches1 = ratio_test(matches12, ratio);
+                good_matches2 = ratio_test(matches21, ratio);
+
+                // cout << "Good matches1:" << good_matches1.size() << endl;
+                // cout << "Good matches2:" << good_matches2.size() << endl;
+
+                // Symmetric Test
+                std::vector<DMatch> better_matches;
+                better_matches = symmetric_test(good_matches1, good_matches2);
+    
+                //cout << "Better matches:" << better_matches.size() << endl;
+
+                //5. Compute the similarity of this image pair...
+                float jaccard = 1.0 * better_matches.size() / (keypoints1.size() + keypoints2.size() - better_matches.size());
+                MatchScore ms;
+                ms.query_image = query_name.substr(query_name.find_last_of("/") + 1);
+                ms.train_image = name;
+                ms.query_image_keypoints_size = keypoints1.size();
+                ms.train_image_keypoints_size = keypoints2.size();
+                ms.good_matches_size =  better_matches.size();
+                ms.jaccard = jaccard;
+               
+                match_scores.push_back(ms);
+                //cout << query_name << "-" << image_name<< ",jaccard:" << jaccard << endl;
+            }
+        }
+    }else{
+        cout << "cannot open the directory!\n";
+        exit(-1);
+    }
+
+    // We got all the matches and its scores, so sort them :) FIXME to better top-k
+    result = match_scores_sort(match_scores, k);
+
+    clock_t end = clock();
+    double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+    // cout << "Time Costs : " << elapsed_secs << endl;
+    return result;
+}
+
 bool has_suffix(const std::string &str, const std::string &suffix){
     return str.size() >= suffix.size() &&
            str.compare(str.size() - suffix.size(), suffix.size(), suffix) == 0;
@@ -152,7 +253,7 @@ vector<string> match_scores_sort(vector<MatchScore> v, int k){
         res.push_back(v[i].train_image);
         cout << counter << ": {" << v[i].query_image << ", " << v[i].train_image << ", "
              << v[i].query_image_keypoints_size << ", " << v[i].train_image_keypoints_size << ", "
-             << v[i].good_matches_size << ", " << v[i].jaccard << "}" << endl;
+             << v[i].good_matches_size << ", " << v[i].jaccard << "}" << endl << endl;
         counter ++ ;
     }
     return res;
