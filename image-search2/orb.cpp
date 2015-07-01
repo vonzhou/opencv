@@ -32,6 +32,7 @@ vector<string> match_scores_sort(std::vector<MatchScore> v, int k);
 vector<DMatch> ratio_test(vector< vector<DMatch> > matches12, double ratio);
 vector<DMatch> symmetric_test(std::vector<DMatch> good_matches1, std::vector<DMatch> good_matches2);
 int get_score(int num, priority_queue<MatchScore, vector<MatchScore>, ScoreComp> q, int group_size);
+Mat resize_image(Mat origin, float factor);
 
 /*
  * This time we know how the images are named, 4 images a group, use one for query image and 
@@ -48,6 +49,7 @@ int  get_search_score(string input_image_prefix, int num, int group_size){
 
     //1. Get the image pair matrix...
     Mat query_image = imread(query_name, 1);
+    query_image = resize_image(query_image, SCALE_FACTOR);
     Mat image;
 
     Ptr<FeatureDetector> detector;
@@ -195,5 +197,14 @@ int get_score(int num, priority_queue<MatchScore, vector<MatchScore>, ScoreComp>
     return score;
 }
 
+// Scale the image by scale
+Mat resize_image(Mat origin, float factor){
+    Mat big = origin;
+    Mat dst;
+    // resize big to dst 
+    cv::resize(big, dst, cvSize(0,0), factor, factor);
+
+    return dst;
+}
 
 
