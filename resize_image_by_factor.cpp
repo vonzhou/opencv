@@ -24,7 +24,7 @@ int main(int argc, const char *argv[]){
 
     // show it on an image
     imshow("big", big);
-    dst = resize(big, 2);
+    dst = resize(big, 0.3);
     imshow("test", dst);
     waitKey(0);
 
@@ -64,46 +64,6 @@ int main(int argc, const char *argv[]){
     // cout << "Time Costs : " << elapsed_secs << endl;
     
     return 0;
-}
-
-// search images using broute force
-void retrieve_with_bf(string input_image, int size, std::vector<string> imgs){
-
-    // get input image according to the size
-    Mat input_mat = imread(IMG_DIR + input_image, 0);
-    Mat input = resize(input_mat, size);
-    //imshow("resize", in);
-
-    // Get ORB detector and descriptor
-    string method = "ORB";
-    Ptr<FeatureDetector> detector;
-    Ptr<DescriptorExtractor> extractor;
-    detector = FeatureDetector::create(method);
-    extractor = DescriptorExtractor::create(method);
-
-    vector<KeyPoint> keypoints1, keypoints2;
-    Mat descriptors1,descriptors2;
-
-    detector->detect(input, keypoints1);
-    extractor->compute(input,keypoints1,descriptors1);
-
-    
-
-    for(std::vector<Mat>::size_type i=0; i != imgs.size(); i++){
-        Mat temp = imread(IMG_DIR + imgs[i], 0);
-
-        // compute the descriptors
-        detector->detect(temp, keypoints2);
-        extractor->compute(temp,keypoints2,descriptors2);
-
-        // match them 
-        BFMatcher bfmatcher(NORM_L2, true);
-        vector<DMatch> matches;
-        bfmatcher.match(descriptors1, descriptors2, matches);
-        
-        // output the logs
-        cout << imgs[i] << ":" << keypoints1.size() << ":" << keypoints2.size() << ":" << matches.size() << endl;
-    }
 }
 
 // Scale the image by size

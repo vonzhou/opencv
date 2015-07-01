@@ -19,7 +19,7 @@ using namespace std;
 #define IMAGE_DIR "../Dataset/images/"
 #define FEATURES_SIZE 500 
 #define RATIO 0.8
-#define SCALE_FACTOR 0.27
+#define SCALE_FACTOR 0.6
 
 int  get_search_score(string input_image_prefix, int num, int k);
 std::vector<string> searchImages_ORB(string input_image, string img_dir, int k, int nfeatures, double ratio);

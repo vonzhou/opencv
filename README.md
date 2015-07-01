@@ -40,6 +40,10 @@
 1. [500 features with ratio 0.9](test_log_500_0.9.md)
 1. [1000 features with ratio 0.8](test_log_1000_0.8.md)
 
+### 4. How the Query Image size impact the retrieval score.
+
+[test result](image-search2/README.md)
+
 
 ### 4.Other demo on the road.
 
