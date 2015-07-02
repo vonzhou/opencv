@@ -1,0 +1,16 @@
+
+#### The demo to learn opencv.....
+
+
+
+
+
+=>  sift_write.cpp : Extract SIFT descriptors of a image and dump to a file!
+
+=> sift_demo.cxx : Hello SIFT...
+
+=> read_image.cxx : Read a image and show ....
+
+=> resize.cxx : Resize image...
+
+=> sift_descriptor.cxx : To see SIFT descriptors...

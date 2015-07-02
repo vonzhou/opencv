@@ -9,3 +9,9 @@ Every time compute a large iamge dataset to get Descriptos is a high overhead pr
 #### Is it right?? YES !
 ![compare](orb_serial_test.png)
 
+
+
+=>  orb_write.cpp : Extract ORB descriptors of a image and dump to a file! 
+
+=>  orb_write_batch.cpp : Extract ORB descriptors of image dataset and dump them  to a coresponding files! **very useful**....
+

@@ -77,30 +77,16 @@
 
 ### 8.Other easy demo on the road.
 
-==>[demo](match/)
+==>[demo](tutorial/)
 
 
-=>  match_brouteforce.cxx : Descriptors Matching using broute force method. it is worked with SIFT, SURF, ORB(provided by params)
+### 9. My Blog is Here [vonzhou](http://blog.csdn.net/vonzhoufz).
 
-=>  match_brouteforce_fast.cxx : Fast detecting + Surf descriptors!
 
-=> SIFT_match.cpp : Extract SIFT descriptors and match two images by broute force, **Using ratio test and symmetric test , it is very effective!** 
 
-=>  SIFT_match2.cpp : As above , but use Flann-based matcher (kd-tree) !
 
-=>  orb_write.cpp : Extract ORB descriptors of a image and dump to a file! 
 
-=>  orb_write_batch.cpp : Extract ORB descriptors of image dataset and dump them  to a coresponding files! **very useful**....
 
-=>  sift_write.cpp : Extract SIFT descriptors of a image and dump to a file!
-
-=> sift_demo.cxx : Hello SIFT...
-
-=> read_image.cxx : Read a image and show ....
-
-=> resize.cxx : Resize image...
-
-=> sift_descriptor.cxx : To see SIFT descriptors...
 
 
 
