@@ -22,6 +22,7 @@
 ### 2.To See How Ratio impact the ORB Descriptors Matching.
 
 => ORB_match0.cpp : detect features, compute descriptors, then broute force match them ,but the result is bad, even not similar images also mathces too many!
+
 => ORB_match.cpp : **After the ratio test and symmetric test, the result is good, but with ORB the Jaccard similarity is low.(Q)**
 
 | ratio   |  image1 keypoints size    |  image2 keypoints size     |  Good matches1  |   Good matches2 | Better matches | 
@@ -35,14 +36,23 @@
 **So, You can see the trend!**
 
 ### 3.Combine Them Together to Implement Image Retrieval by similarity.
-=> [image-search]()
+
+=> [image-search](image-search/README.md)
+
 => **Test Results** 
+
 1. [500 features with ratio 0.9](test_log_500_0.9.md)
+
 1. [1000 features with ratio 0.8](test_log_1000_0.8.md)
 
 ### 4. How the Query Image size impact the retrieval score.
 
 [test result](image-search2/README.md)
+
+
+### 5. Dump the Descriptors to file for using next time, make it faster to process large dataset. There are two mehtods:1)You can define your own serialization format, such as [my demo](orb-serial/orb_write_my.cpp), 2) Using OpenCV built in component [FileStorage](http://docs.opencv.org/modules/core/doc/xml_yaml_persistence.html). Here I Choose the second method for its easy use.
+
+==> [orb serialization code is here](orb-serial/README.md)
 
 
 ### 4.Other demo on the road.
