@@ -70,6 +70,9 @@ int  get_search_score(string input_image_prefix, int num, int group_size){
     clock_t begin = clock();
     priority_queue<MatchScore, std::vector<MatchScore>, ScoreComp> q; // To get the top k matches...
 
+    detector->detect(query_image, keypoints1);
+    extractor->compute(query_image,keypoints1,descriptors1);
+
     DIR *dir;
     struct dirent *ent;
     if((dir = opendir(IMAGE_DIR)) != NULL){
@@ -79,26 +82,17 @@ int  get_search_score(string input_image_prefix, int num, int group_size){
             if(has_suffix(name, "g")){
                 image_name = IMAGE_DIR + name;
                 image = imread(image_name, 1);
+                
                 // 2. detect features and extract the descriptors
-                detector->detect(query_image, keypoints1);
                 detector->detect(image, keypoints2);
 
                 // cout << "# keypoints of query_image :" << keypoints1.size() << endl;
-                // cout << "# keypoints of image :" << keypoints2.size() << endl;
-
-                extractor->compute(query_image,keypoints1,descriptors1);
                 extractor->compute(image,keypoints2,descriptors2);
                 //cout << "Descriptors size :" << descriptors1.cols << ":"<< descriptors1.rows << endl;
 
                 //3.Match the descriptors in two directions...
                 matcher->knnMatch( descriptors1, descriptors2, matches12, 2 );
                 matcher->knnMatch( descriptors2, descriptors1, matches21, 2 );
-
-                // BFMatcher bfmatcher(NORM_L2, true);
-                // vector<DMatch> matches;
-                // bfmatcher.match(descriptors1, descriptors2, matches);
-                // cout << "Matches1-2:" << matches12.size() << endl;
-                // cout << "Matches2-1:" << matches21.size() << endl;
 
                 //4. ratio test proposed by David Lowe paper = 0.8
                 std::vector<DMatch> good_matches1, good_matches2;
