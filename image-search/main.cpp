@@ -20,7 +20,7 @@ int main(int argc, const char *argv[]){
 
     cout << "-----------------------------------------" << endl;
     
-    result = searchImages_SIFT(image_name, dir_name,10, 0.8);
+    // result = searchImages_SIFT(image_name, dir_name,10, 0.8);
     //cout << "result:" << result.size() << endl;
     // After get the top  k, we show it...
     // for(int i=0; i < result.size(); i++){

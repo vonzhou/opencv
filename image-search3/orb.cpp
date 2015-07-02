@@ -50,8 +50,12 @@ Mat orb_read(string input_file){
 */
 int  get_search_score(string input_image_prefix, int num, int group_size){
 
-    // std::to_string()  C++ 11 .....
-    string query_name = IMAGE_DIR + input_image_prefix + to_string(num) + ".jpg";
+    // we will format the image name from its ids
+    std::ostringstream strbuf;
+    strbuf << setfill('0') << setw(5) << num;
+    string query_name = IMAGE_DIR + input_image_prefix + strbuf.str() + ".jpg";
+    //cout << query_name << endl;
+
     // NB. This time the train images are whate their ORBs indicate...
     string orb_dir = string(IMAGE_DIR) + "orbs/";
     // cout << query_name << "--" << orb_dir << endl;
@@ -79,7 +83,7 @@ int  get_search_score(string input_image_prefix, int num, int group_size){
     std::vector<string> result;
     std::vector<MatchScore> match_scores;
 
-    clock_t begin = clock();
+    // clock_t begin = clock();
 
     priority_queue<MatchScore, std::vector<MatchScore>, ScoreComp> q; // To get the top k matches...
 
@@ -140,9 +144,9 @@ int  get_search_score(string input_image_prefix, int num, int group_size){
     int score = get_score(num, q, group_size);
     cout << "Score For " << num << " = " << score << endl;
 
-    clock_t end = clock();
-    double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
-    cout << "Time Costs : " << elapsed_secs << endl;
+    // clock_t end = clock();
+    // double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+    // cout << "Time Costs : " << elapsed_secs << endl;
     return score;
 }
 

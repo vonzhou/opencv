@@ -12,14 +12,18 @@
 #include <queue>
 #include <vector>
 #include <set>
+#include <iomanip> // setfill, setw
 
 using namespace cv;
 using namespace std;
 
-#define IMAGE_DIR "../Dataset/images/"
+#define IMAGE_DIR "../Dataset/imageset1000/"
 #define FEATURES_SIZE 500 
 #define RATIO 0.8
-#define SCALE_FACTOR 1
+#define SCALE_FACTOR 0.9
+
+#define GROUPS 250
+#define GROUP_SIZE 4
 
 int  get_search_score(string input_image_prefix, int num, int k);
 std::vector<string> searchImages_ORB(string input_image, string img_dir, int k, int nfeatures, double ratio);

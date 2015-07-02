@@ -1,6 +1,6 @@
 /*
  * use a image in a group as query image, search the dataset and get the score
- * The image dataset has 56 groups , every group has 4 images.SO:
+ * The image dataset has *GROUPS* groups , every group has *GROUP_SIZE* images.SO:
  * @vonzhou
 */
 
@@ -20,10 +20,16 @@ double average_score(string input_image_prefix, int begin_id, int groups, int gr
 
 int main(int argc, const char *argv[]){
 
-    string input_image_prefix = "ukbench00";
-    double  score = average_score(input_image_prefix, 132, 56, 4);
+    string input_image_prefix = "ukbench";
+    // clock_t begin = clock();
+
+    double  score = average_score(input_image_prefix, 0, GROUPS, GROUP_SIZE);
     //int  score = get_search_score(input_image_prefix, 188, 4);
     cout << "Average Score For This Dataset: " << score << endl;
+
+    // clock_t end = clock();
+    // double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+    // cout << "Time Costs : " << elapsed_secs << endl;
   
     return 0;
 }

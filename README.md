@@ -19,6 +19,7 @@
 
 [Test Results](http://blog.csdn.net/vonzhoufz/article/details/46594369)
 
+
 ### 2.To See How Ratio impact the ORB Descriptors Matching.
 
 => ORB_match0.cpp : detect features, compute descriptors, then broute force match them ,but the result is bad, even not similar images also mathces too many!
@@ -35,6 +36,7 @@
 
 **So, You can see the trend!**
 
+
 ### 3.Combine Them Together to Implement Image Retrieval by similarity.
 
 => [image-search](image-search/README.md)
@@ -45,9 +47,12 @@
 
 1. [1000 features with ratio 0.8](test_log_1000_0.8.md)
 
+
+
 ### 4. How the Query Image size impact the retrieval score.
 
 [test result](image-search2/README.md)
+
 
 
 ### 5. Dump the Descriptors to file for using next time, make it faster to process large dataset. There are two mehtods:1)You can define your own serialization format, such as [my demo](orb-serial/orb_write_my.cpp), 2) Using OpenCV built in component [FileStorage](http://docs.opencv.org/modules/core/doc/xml_yaml_persistence.html). Here I Choose the second method for its easy use.
@@ -55,7 +60,25 @@
 ==> [orb serialization code is here](orb-serial/README.md)
 
 
-### 4.Other demo on the road.
+### 6.This time I get train images descriptors from file to do the image retrieval!
+
+[test result](image-search3/README.md)
+
+
+### 7. Match descriptors of SIFT,ORB,FAST,etc ,and show how two images matched...
+
+==>[match](match/)
+
+
+### 8.Image resize by scale factor.
+
+==>[resize](resize/)
+
+
+### 8.Other easy demo on the road.
+
+==>[demo](match/)
+
 
 =>  match_brouteforce.cxx : Descriptors Matching using broute force method. it is worked with SIFT, SURF, ORB(provided by params)
 
