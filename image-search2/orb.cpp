@@ -67,7 +67,7 @@ int  get_search_score(string input_image_prefix, int num, int group_size){
     std::vector<string> result;
     std::vector<MatchScore> match_scores;
 
-    //clock_t begin = clock();
+    clock_t begin = clock();
     priority_queue<MatchScore, std::vector<MatchScore>, ScoreComp> q; // To get the top k matches...
 
     DIR *dir;
@@ -141,9 +141,9 @@ int  get_search_score(string input_image_prefix, int num, int group_size){
     int score = get_score(num, q, group_size);
     cout << "Score For " << num << " = " << score << endl;
 
-    // clock_t end = clock();
-    // double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
-    // cout << "Time Costs : " << elapsed_secs << endl;
+    clock_t end = clock();
+    double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+    cout << "Time Costs : " << elapsed_secs << endl;
     return score;
 }
 

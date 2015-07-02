@@ -34,6 +34,14 @@ vector<DMatch> symmetric_test(std::vector<DMatch> good_matches1, std::vector<DMa
 int get_score(int num, priority_queue<MatchScore, vector<MatchScore>, ScoreComp> q, int group_size);
 Mat resize_image(Mat origin, float factor);
 
+Mat orb_read(string input_file){
+  Mat descriptors; 
+  FileStorage fs(input_file, FileStorage::READ);
+  fs["descriptor"] >> descriptors;
+  fs.release();
+  return descriptors;
+}
+
 /*
  * This time we know how the images are named, 4 images a group, use one for query image and 
  * see if the other 3 images are searched, score each query 4,3,2....
@@ -44,8 +52,10 @@ int  get_search_score(string input_image_prefix, int num, int group_size){
 
     // std::to_string()  C++ 11 .....
     string query_name = IMAGE_DIR + input_image_prefix + to_string(num) + ".jpg";
-    // cout << query_name << endl;
-    string image_name ;
+    // NB. This time the train images are whate their ORBs indicate...
+    string orb_dir = string(IMAGE_DIR) + "orbs/";
+    // cout << query_name << "--" << orb_dir << endl;
+    string orb_file ;
 
     //1. Get the image pair matrix...
     Mat query_image = imread(query_name, 1);
@@ -60,6 +70,8 @@ int  get_search_score(string input_image_prefix, int num, int group_size){
 
     vector<KeyPoint> keypoints1, keypoints2;
     Mat descriptors1,descriptors2;
+     detector->detect(query_image, keypoints1);
+     extractor->compute(query_image,keypoints1,descriptors1);
 
     vector< vector<DMatch> > matches12, matches21;
     Ptr<DescriptorMatcher> matcher = DescriptorMatcher::create("BruteForce-Hamming");
@@ -67,38 +79,25 @@ int  get_search_score(string input_image_prefix, int num, int group_size){
     std::vector<string> result;
     std::vector<MatchScore> match_scores;
 
-    //clock_t begin = clock();
+    clock_t begin = clock();
+
     priority_queue<MatchScore, std::vector<MatchScore>, ScoreComp> q; // To get the top k matches...
 
     DIR *dir;
     struct dirent *ent;
-    if((dir = opendir(IMAGE_DIR)) != NULL){
+    if((dir = opendir(orb_dir.c_str())) != NULL){
         while((ent = readdir(dir)) != NULL){
             string name = (string)(ent->d_name);
             // jpg , jpeg png etc images(filter other files that is not image)  FIXME
-            if(has_suffix(name, "g")){
-                image_name = IMAGE_DIR + name;
-                image = imread(image_name, 1);
-                // 2. detect features and extract the descriptors
-                detector->detect(query_image, keypoints1);
-                detector->detect(image, keypoints2);
+            if(has_suffix(name, "xml")){
 
-                // cout << "# keypoints of query_image :" << keypoints1.size() << endl;
-                // cout << "# keypoints of image :" << keypoints2.size() << endl;
-
-                extractor->compute(query_image,keypoints1,descriptors1);
-                extractor->compute(image,keypoints2,descriptors2);
-                //cout << "Descriptors size :" << descriptors1.cols << ":"<< descriptors1.rows << endl;
-
+                orb_file = orb_dir + name;
+                //We load the orb descriptors from the file not compute....
+                Mat descriptors2 = orb_read(orb_file);
+                
                 //3.Match the descriptors in two directions...
                 matcher->knnMatch( descriptors1, descriptors2, matches12, 2 );
                 matcher->knnMatch( descriptors2, descriptors1, matches21, 2 );
-
-                // BFMatcher bfmatcher(NORM_L2, true);
-                // vector<DMatch> matches;
-                // bfmatcher.match(descriptors1, descriptors2, matches);
-                // cout << "Matches1-2:" << matches12.size() << endl;
-                // cout << "Matches2-1:" << matches21.size() << endl;
 
                 //4. ratio test proposed by David Lowe paper = 0.8
                 std::vector<DMatch> good_matches1, good_matches2;
@@ -129,11 +128,11 @@ int  get_search_score(string input_image_prefix, int num, int group_size){
                 ms.jaccard = jaccard;
                
                 q.push(ms);
-                //cout << query_name << "-" << image_name<< ",jaccard:" << jaccard << endl;
+                //cout << query_name << "-" << orb_file<< ",jaccard:" << jaccard << endl;
             }
         }
     }else{
-        cout << "cannot open the directory!\n";
+        cout << "Oops, cannot open the directory!\n";
         exit(-1);
     }
 
@@ -141,9 +140,9 @@ int  get_search_score(string input_image_prefix, int num, int group_size){
     int score = get_score(num, q, group_size);
     cout << "Score For " << num << " = " << score << endl;
 
-    // clock_t end = clock();
-    // double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
-    // cout << "Time Costs : " << elapsed_secs << endl;
+    clock_t end = clock();
+    double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+    cout << "Time Costs : " << elapsed_secs << endl;
     return score;
 }
 

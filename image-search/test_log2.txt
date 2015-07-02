@@ -1,9 +1,0 @@
-Begin to testing 100.jpg....
-1: {100.jpg, target12.jpg, 500, 500, 500, 0.5}
-2: {100.jpg, target16.jpg, 500, 500, 479, 0.479}
-3: {100.jpg, target13.jpg, 500, 500, 458, 0.458}
-Begin to testing 90.jpg....
-1: {90.jpg, target8.jpg, 500, 500, 225, 0.225}
-2: {90.jpg, target2.jpg, 500, 500, 220, 0.22}
-3: {90.jpg, target13.jpg, 500, 500, 213, 0.213}
-Begin to testing 80.jpg....
