@@ -20,7 +20,7 @@ using namespace std;
 #define IMAGE_DIR "../Dataset/imageset1000/"
 #define FEATURES_SIZE 500 
 #define RATIO 0.8
-#define SCALE_FACTOR 0.9
+#define SCALE_FACTOR 0.1
 
 #define GROUPS 250
 #define GROUP_SIZE 4
