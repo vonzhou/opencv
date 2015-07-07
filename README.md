@@ -70,7 +70,7 @@
 ==>[match](match/)
 
 
-### 8.Image resize by scale factor.
+### 8.Image resize by scale factor and dump them to specified folders.
 
 ==>[resize](resize/)
 
