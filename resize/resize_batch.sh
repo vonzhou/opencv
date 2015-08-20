@@ -1,4 +1,4 @@
-./resize  ../Dataset/image100  0.95
+./resize  ../Dataset/image100/  0.95
 ./resize  ../Dataset/image100/  0.9
 ./resize  ../Dataset/image100/  0.85
 ./resize  ../Dataset/image100/  0.8

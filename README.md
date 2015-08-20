@@ -55,14 +55,19 @@
 
 
 
-### 5. Dump the Descriptors to file for using next time, make it faster to process large dataset. There are two mehtods:1)You can define your own serialization format, such as [my demo](orb-serial/orb_write_my.cpp), 2) Using OpenCV built in component [FileStorage](http://docs.opencv.org/modules/core/doc/xml_yaml_persistence.html). Here I Choose the second method for its easy use.
+### 5. Dump the Descriptors to file for using next time, make it faster to process large dataset. There are two mehtods:1)You can define your own serialization format, such as [my demo](descriptor-persistence/orb_write_my.cpp), 2) Using OpenCV built in component [FileStorage](http://docs.opencv.org/modules/core/doc/xml_yaml_persistence.html). Here I Choose the second method for its easy use.
 
-==> [orb serialization code is here](orb-serial/README.md)
+==> [write ORB descriptors to file batchly](descriptor-persistence/orb_write_batch.cpp)
+==> [write SIFT descriptors to file batchly](descriptor-persistence/sift_write_batch.cpp)
 
 
-### 6.This time I get train images descriptors from file to do the image retrieval!
+### 6.1 This time I get train images' ORB descriptors from file to do the image retrieval!
 
 [test result](image-search3/README.md)
+
+### 6.2 As above, get train images' SIFT descriptors from files, and then do image retrieval.
+
+[Source Code](image-search-by-sift/README.md)
 
 
 ### 7. Match descriptors of SIFT,ORB,FAST,etc ,and show how two images matched...
