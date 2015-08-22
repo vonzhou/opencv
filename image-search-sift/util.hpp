@@ -17,7 +17,7 @@
 using namespace cv;
 using namespace std;
 
-#define IMAGE_DIR "/home/zuo/imagesets-500/"
+#define IMAGE_DIR "/home/zuo/imagesets500/"
 #define FEATURES_SIZE 500 
 #define RATIO 0.8
 #define SCALE_FACTOR 0.1

@@ -50,7 +50,7 @@ int  get_search_score(string input_image_prefix, int num, int group_size){
     Ptr<DescriptorMatcher> matcher = DescriptorMatcher::create("BruteForce");
 
     descriptors1 = descriptors_read(query_image_orb_file);
-    cout << "SIFT Descriptors Row:" << descriptors1.rows << ", COL:" << descriptors1.cols << endl;    
+    //cout << "SIFT Descriptors Row:" << descriptors1.rows << ", COL:" << descriptors1.cols << endl;    
     std::vector<string> result;
     std::vector<MatchScore> match_scores;
 
@@ -66,7 +66,7 @@ int  get_search_score(string input_image_prefix, int num, int group_size){
 
                 orb_file = orb_dir + name;
                 //We load the orb descriptors from the file not compute....
-                Mat descriptors2 = orb_read(orb_file);
+                Mat descriptors2 = descriptors_read(orb_file);
 		        // Before match should assert two descriptors type is same, otherwise ERROR
 		        if((descriptors1.cols != descriptors2.cols) || (descriptors1.type() != descriptors2.type()))
 			     cout << "NB.." << endl;
