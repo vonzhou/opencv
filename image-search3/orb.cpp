@@ -53,37 +53,23 @@ int  get_search_score(string input_image_prefix, int num, int group_size){
     // we will format the image name from its ids
     std::ostringstream strbuf;
     strbuf << setfill('0') << setw(5) << num;
-    string query_name = IMAGE_DIR + input_image_prefix + strbuf.str() + ".jpg";
-    //cout << query_name << endl;
 
     // NB. This time the train images are whate their ORBs indicate...
     string orb_dir = string(IMAGE_DIR) + "orbs/";
     // cout << query_name << "--" << orb_dir << endl;
+    string query_image_orb_file = orb_dir + input_image_prefix + strbuf.str() + ".jpg.xml";
     string orb_file ;
-
-    //1. Get the image pair matrix...
-    Mat query_image = imread(query_name, 1);
-    query_image = resize_image(query_image, SCALE_FACTOR);
-    Mat image;
-
-    Ptr<FeatureDetector> detector;
-    Ptr<DescriptorExtractor> extractor;
-    
-    detector = new OrbFeatureDetector(FEATURES_SIZE);
-    extractor = DescriptorExtractor::create("ORB");
 
     vector<KeyPoint> keypoints1, keypoints2;
     Mat descriptors1,descriptors2;
-     detector->detect(query_image, keypoints1);
-     extractor->compute(query_image,keypoints1,descriptors1);
 
     vector< vector<DMatch> > matches12, matches21;
     Ptr<DescriptorMatcher> matcher = DescriptorMatcher::create("BruteForce-Hamming");
 
+    descriptors1 = orb_read(query_image_orb_file);// THIS TIME I READ IT FROM ORB FILE, NOT FROM IMAGE
+//    cout << "Type:" << descriptors1.type() << ", COL:" << descriptors1.cols << endl;    
     std::vector<string> result;
     std::vector<MatchScore> match_scores;
-
-    // clock_t begin = clock();
 
     priority_queue<MatchScore, std::vector<MatchScore>, ScoreComp> q; // To get the top k matches...
 
@@ -98,41 +84,44 @@ int  get_search_score(string input_image_prefix, int num, int group_size){
                 orb_file = orb_dir + name;
                 //We load the orb descriptors from the file not compute....
                 Mat descriptors2 = orb_read(orb_file);
-                
-                //3.Match the descriptors in two directions...
-                matcher->knnMatch( descriptors1, descriptors2, matches12, 2 );
-                matcher->knnMatch( descriptors2, descriptors1, matches21, 2 );
+		// Before match should assert two descriptors type is same, otherwise ERROR
+		if((descriptors1.cols != descriptors2.cols) || (descriptors1.type() != descriptors2.type()))
+			cout << "NB.." << endl;
+               		//cout << descriptors1.cols << "====" << descriptors2.cols << endl; 
+                	//3.Match the descriptors in two directions...
+                	matcher->knnMatch( descriptors1, descriptors2, matches12, 2 );
+                	matcher->knnMatch( descriptors2, descriptors1, matches21, 2 );
 
-                //4. ratio test proposed by David Lowe paper = 0.8
-                std::vector<DMatch> good_matches1, good_matches2;
-                good_matches1 = ratio_test(matches12, RATIO);
-                good_matches2 = ratio_test(matches21, RATIO);
+                	//4. ratio test proposed by David Lowe paper = 0.8
+                	std::vector<DMatch> good_matches1, good_matches2;
+                	good_matches1 = ratio_test(matches12, RATIO);
+                	good_matches2 = ratio_test(matches21, RATIO);
 
-                // cout << "Good matches1:" << good_matches1.size() << endl;
-                // cout << "Good matches2:" << good_matches2.size() << endl;
+                	// cout << "Good matches1:" << good_matches1.size() << endl;
+                	// cout << "Good matches2:" << good_matches2.size() << endl;
 
-                // Symmetric Test
-                std::vector<DMatch> better_matches;
-                better_matches = symmetric_test(good_matches1, good_matches2);
-    
-                //cout << "Better matches:" << better_matches.size() << endl;
+                	// Symmetric Test
+                	std::vector<DMatch> better_matches;
+   	                better_matches = symmetric_test(good_matches1, good_matches2);
+    	
+        	        //cout << "Better matches:" << better_matches.size() << endl;
 
-                //5. Compute the similarity of this image pair...
-                float jaccard = 1.0 * better_matches.size() / (keypoints1.size() + keypoints2.size() - better_matches.size());
-                MatchScore ms;
-                ms.query_image_id = num;
-                // Get the image id from image name...(such , ukbench00132.jpg - > 132)
-                int start = name.find(input_image_prefix) + input_image_prefix.length() - 1;
-                string str_id = name.substr(start+1, name.find_last_of(".") - 1);
-                //cout << str_id << endl;
-                ms.train_image_id = stoi(str_id);  // USE -std=c++11  
-                ms.query_image_keypoints_size = keypoints1.size();
-                ms.train_image_keypoints_size = keypoints2.size();
-                ms.good_matches_size =  better_matches.size();
-                ms.jaccard = jaccard;
+                	//5. Compute the similarity of this image pair...
+			//cout << keypoints1.size() << ",,," << keypoints2.size() << endl;
+          	        float jaccard = 1.0 * better_matches.size() / (descriptors1.rows + descriptors2.rows - better_matches.size());
+                	MatchScore ms;
+              	        ms.query_image_id = num;
+                	// Get the image id from image name...(such , ukbench00132.jpg - > 132)
+                	int start = name.find(input_image_prefix) + input_image_prefix.length() - 1;
+                	string str_id = name.substr(start+1, name.find_last_of(".") - 1);
+                	//cout << str_id << endl;
+                	ms.train_image_id = stoi(str_id);  // USE -std=c++11  
+                	ms.query_image_keypoints_size = keypoints1.size();
+                	ms.train_image_keypoints_size = keypoints2.size();
+                	ms.good_matches_size =  better_matches.size();
+                	ms.jaccard = jaccard;
                
-                q.push(ms);
-                //cout << query_name << "-" << orb_file<< ",jaccard:" << jaccard << endl;
+                	q.push(ms);
             }
         }
     }else{
@@ -144,9 +133,6 @@ int  get_search_score(string input_image_prefix, int num, int group_size){
     int score = get_score(num, q, group_size);
     cout << "Score For " << num << " = " << score << endl;
 
-    // clock_t end = clock();
-    // double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
-    // cout << "Time Costs : " << elapsed_secs << endl;
     return score;
 }
 
