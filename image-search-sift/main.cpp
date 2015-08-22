@@ -1,10 +1,4 @@
-/*
- * use a image in a group as query image, search the dataset and get the score
- * The image dataset has *GROUPS* groups , every group has *GROUP_SIZE* images.SO:
- * @vonzhou
-*/
-
-#include "orb.hpp"
+#include "util.hpp"
 
 
 double average_score(string input_image_prefix, int begin_id, int groups, int group_size){

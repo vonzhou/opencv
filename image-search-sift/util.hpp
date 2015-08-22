@@ -17,12 +17,12 @@
 using namespace cv;
 using namespace std;
 
-#define IMAGE_DIR "../Dataset/imageset1000/"
+#define IMAGE_DIR "/home/zuo/imagesets-500/"
 #define FEATURES_SIZE 500 
 #define RATIO 0.8
 #define SCALE_FACTOR 0.1
 
-#define GROUPS 250
+#define GROUPS 500
 #define GROUP_SIZE 4
 
 int  get_search_score(string input_image_prefix, int num, int k);
