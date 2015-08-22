@@ -65,6 +65,9 @@
 
 [test result](image-search3/README.md)
 
+#### 查询图片也从orb特征向量文件中获取 2015.8.23
+**问题：**从图片得到的descriptos.cols可能为0，所以在匹配的时候就会出现类型不匹配的错误！
+
 ### 6.2 As above, get train images' SIFT descriptors from files, and then do image retrieval.
 
 [Source Code](image-search-by-sift/README.md)
