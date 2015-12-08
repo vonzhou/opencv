@@ -72,6 +72,8 @@
 
 [Source Code](image-search-by-sift/README.md)
 
+### 使用SIFT特征向量进行相似图片查找 [Source](image-search-sift/)
+
 
 ### 7. Match descriptors of SIFT,ORB,FAST,etc ,and show how two images matched...
 
